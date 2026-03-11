@@ -1,0 +1,60 @@
+sources:
+  - name: demo-src
+    description: Данные из БД перелётов
+    database: dwh_flight
+    schema: demo_src
+    tables:
+      - name: airplanes
+        description: '{{ doc("airplanes_description") }}'
+        columns:
+          - name: airplane_code
+            description: Код модели самолёта
+            tests:
+              - not_null
+              - unique
+          - name: model
+            description: Модель самолёта
+          - name: range
+            description: "*Неизвестное поле*"
+          - name: speed
+            description: Неизвестное поле
+      - name: airports
+        description: Аэропорты
+        columns:
+          - name: airport_code
+            description: Код аэропорта
+          - name: airport_name
+            description: Наименование аэропорта
+          - name: city
+            description: Город
+          - name: country
+            description: Страна
+          - name: coordinates
+            description: Координаты
+          - name: timezone
+            description: Временная зона
+      - name: seats
+        description: Места в самолётах
+        columns:
+          - name: airplane_code
+            description: Код модели самолёта
+          - name: seat_no
+            description: Номер места
+          - name: fare_conditions
+            description: Класс места
+      - name: bookings
+        description: Бронирование
+        columns:
+          - name: book_ref
+            description: Номер бронирования
+          - name: book_date
+            description: Дата бронирования
+          - name: total_amount
+            description: Общая сумма бронирования
+        freshness:
+          warn_after: {count: 60000, period: hour}
+          error_after:
+            count: 10000
+            period: day
+          filter: current_timestamp::date - book_date::date < 30000
+        loaded_at_field: book_date::timestamp
