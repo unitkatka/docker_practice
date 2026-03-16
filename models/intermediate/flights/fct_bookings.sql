@@ -1,6 +1,8 @@
+
 {{
   config(
-    materialized = 'table'
+    materialized = 'table',
+    tags = ['bookings']
   )
 }}
 select
